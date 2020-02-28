@@ -1,0 +1,2 @@
+This https://github.com/tatobari/hx711py looks to be a possible library to use
+to measure the weight.
