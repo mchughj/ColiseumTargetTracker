@@ -43,7 +43,9 @@ class HX711:
 
         
     def convertFromTwosComplement24bit(self, inputValue):
-        return -(inputValue & 0x800000) + (inputValue & 0x7fffff)
+        result = -(inputValue & 0x800000) + (inputValue & 0x7fffff)
+        # print ("convertFromTwosComplement24bit; inputValue: {}, result: {}".format(inputValue, result))
+        return result
 
     
     def is_ready(self):
@@ -255,6 +257,10 @@ class HX711:
         value = value / self.REFERENCE_UNIT_B
         return value
 
+    def get_average_weight(self, times=5):
+        value = self.read_average(times) - self.get_offset_A()
+        value = value / self.REFERENCE_UNIT
+        return value 
     
     # Sets tare for channel A for compatibility purposes
     def tare(self, times=15):
