@@ -40,13 +40,14 @@ while True:
         # if event object type is QUIT 
         # then quitting the pygame 
         # and program both. 
-        if event.type == pygame.QUIT : 
+        if event.type == pygame.QUIT: 
             pygame.quit() 
             quit() 
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
+            if event.key == pygame.K_q || event.key == pygame.K_ESC:
                 pygame.quit() 
                 quit() 
   
         # Draws the surface object to the screen.   
         pygame.display.update()  
+
