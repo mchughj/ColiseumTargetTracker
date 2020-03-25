@@ -14,16 +14,24 @@ import RPi.GPIO as GPIO
 #    '
 # For high number pins it prints "0" when of course it shouldn't if nothing is attached.
 # 
-# Pins defined below work well.
+# Pins defined below work well.  This picture captures the current state of the pins
+# as the installation is deployed with a Raspberry PI 4 Model B with 1 GB Ram.
 #
-#                         UPPER RIGHT
-#  +---------+---------+ x
-#  |  3V     |   5V    |
-#  |  GPIO2  |   5V    |
-#  |  GPIO3  |   GND   |
-#  |  GPIO4  | GPIO14  |
-#  |  GND    | GPIO15  |
+# ROW                                      UPPER RIGHT
+#                   +---------+---------+ x
+# 1                 |  3V     |   5V    |
+# 2                 |  GPIO2  |   5V    |    
+# 3   Start Game    |  GPIO3  |   GND   |
+# 4   Score Down    |  GPIO4  | GPIO14  |    Score Up
+# 5                 |  GND    | GPIO15  |    Stop Machine
+# 6                 |  GPIO17 | GPIO18  |                
+# 7                 |  GPIO27 |   GND   |                
+# 8                 |  GPIO22 | GPIO23  |    Trigger
+# 9                 |  3V     | GPIO24  |    Echo
+#                   |  GPIO10 |   GND   |                
+#                   |  GPIO17 | GPIO25  |                
 
+# Expressed as GPIO.BCM values.
 GPIO_SCORE_UP     = 14
 GPIO_SCORE_DOWN   = 4
 GPIO_START_GAME   = 3

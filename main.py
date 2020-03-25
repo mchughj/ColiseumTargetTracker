@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Main program for the Coliseum V Target Tracker
+
 import sys
 import os
 import time
@@ -25,6 +27,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 128) 
 BLACK = (0, 0, 0) 
 REFRESH_RATE_HZ = 30
+VERSION = 1.0
 
 def initArgs() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser( 
@@ -33,7 +36,7 @@ def initArgs() -> argparse.ArgumentParser:
     )
     parser.add_argument(
             "-v", "--version", action="version",
-            version = f"{parser.prog} version 1.0.0"
+            version = "Version {}".format(VERSION)
     )
     parser.add_argument(
             "-w", "--windowed", 
@@ -54,6 +57,21 @@ def initArgs() -> argparse.ArgumentParser:
             "--fakeSensor", 
             help = "Use a fake sensor that randomly generates hits",
             default = False, action = "store_true"
+    )
+    parser.add_argument(
+            "--sensorThreshold", 
+            help = "The percentage difference between steady state and a new sensor value that will trigger a positive hit.  A larger value will result in more false positives.  Default is 0.2", 
+            default = 0.2, type=float
+    )
+    parser.add_argument(
+            "--sensorTriggerCooldownMillis", 
+            help = "The number of milliseconds that must pass before another positive sensor value will be considered valid.  This stops a single shot into goal from bouncing around and being registered multiple times while still allowing for multiple distinct shots to be counted.  Too low of a value increases the false positives and too high of a value increases false negatives.  Default is 3000 milliseconds.", 
+            default = 3000, type=float
+    )
+    parser.add_argument(
+            "--sensorHz", 
+            help = "The number of sensor values taken per second.  Various environmental factors will play into choosing a good value here.  For example, using an ultrasonic sensor and too high of a value will cause the sensor to pick up echos of reflections from prior readings.  Too low of a number and you may increase your false negatives.  Default is 30 hertz which is about 33 millisecond delay between readings.",
+            default = 30, type=float
     )
     return parser
 
@@ -83,7 +101,7 @@ def updateScreen(displaySurface, font, score, width, height) -> None:
     showCenteredText(str(score), displaySurface, font, width, height)
 
 def showGameStart(displaySurface, smallerFont, font, score, width, height) -> None:
-    showCenteredText("Read?", displaySurface, smallerFont, width, height)
+    showCenteredText("Ready?", displaySurface, smallerFont, width, height)
     time.sleep(1)
     showCenteredText("3", displaySurface, font, width, height)
     time.sleep(1)
@@ -119,28 +137,38 @@ def main(args) -> None:
     font = pygame.font.SysFont('bitstreamverasansmono', args.fontSize) 
     score = 0
     nextRedraw = 0
+    nextSensorDetect = 0
+    nextAllowableSensorTrigger = 0
     gameRunning = False
 
-    initSensor()
+    initSensor(args.sensorThreshold)
     initController()
 
     showCenteredText("Ready?", displaySurface, smallerFont, width, height)
 
     while True: 
-        currentMillis = int(round(time.time() * 1000)) 
+        t = time.time()
+        currentMillis = int(round(t * 1000)) 
       
         if nextRedraw < currentMillis and gameRunning:
             updateScreen(displaySurface, font, score, width, height)
             nextRedraw = currentMillis + int(1000 / REFRESH_RATE_HZ)
 
-        if sensorDetect():
-            score += 1
+        if nextSensorDetect < currentMillis and gameRunning:
+            if sensorDetect():
+                if nextAllowableSensorTrigger < currentMillis:
+                    score += 1
+                    nextAllowableSensorTrigger = currentMillis + args.sensorTriggerCooldownMillis
+                else:
+                    print("ignoring the subsequent reading;")
+            nextSensorDetect = currentMillis + int(1000 / args.sensorHz)
 
         if controllerIncreaseScore():
             score += 1
 
         if controllerDecreaseScore():
-            score -= 1
+            if score > 0:
+                score -= 1
 
         if controllerStartGame():
             gameRunning = True

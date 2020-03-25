@@ -41,3 +41,15 @@ a ball strikes the outside exists even when using multiple sensors.  I won't rea
 
 The idea here is that a board across the bottom of the goal area can have weight sensors on it to recognize when the 
 ball is within the goal.  This won't recognize when the ball hits in and bounces out.  Something like the [HX711](https://www.amazon.com/gp/product/B079FTXR7Y/) may work.
+
+## Requirements
+
+The game is played with a target that is 18" wide by 23" tall.   The depth of the box into which the players are shooting is (approximately) 30" deep.  The most difficult set of requirements is when the players are shooting an arrow into the openinig using a 'standard' archery tag bow.  These are 28 pound bows shooting foam tipped arrows.  From http://bestcompoundbowsource.com/whats-bows-real-speed/ a 70lb bow pulled back to 30" and firing a 350gram arrow has a speed of 320 feet per second.  Accounting for the difference in bow strength from 70lbs to 28lbs (28 pounds as mandated by 'official' archery tag rules, although the cheapo bows on Amazon have a 16-20lb draw weight) this is a reduction to 240 feet per second.  The pull back for most of these bows is 22-24" so this is a further reduction of speed to 160 feet per second.  The weight of the arrow is also a factor where the foam tip is likely another 50 grams which will slow the arrow further to 145 feet per second.  
+
+This is all theoretical though.  From Flip's description it is possible, but not easy, to shoot the arrow the entire length of the 90 foot long field but you have to aim at 45 degrees to do so.  He also estimates that the time required is 3 seconds.  Plenty of time for a player to duck out of the way if someone were to shoot at them from across the field.  
+
+Using http://omnicalculator.com/physics/projectile-motion if the initial velocity is 60 feet per second and shot at a 45 degree angle then the flight time would be 2.76 seconds and goes 117 feet.  This is close enough to the approximate experience-based values so we can use 60 feet per second as our metric.
+
+Worst case scenario is to shoot within the box and ricochet right back out.  The distance to travel here is 5 feet total.  Assuming that the arrow is traveling 60 feet per second then I have 0.083 seconds, or 83 milliseconds, in order to detect the arrow.  This is a detection rate of just 12 hertz.  Definitely doable using a variety of technologies.
+
+
