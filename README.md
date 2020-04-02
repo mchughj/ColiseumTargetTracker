@@ -1,5 +1,8 @@
 # ColiseumTargetTracker
 
+![Two Final Units](images/TwoUnits.jpg)
+(Two completed units)
+
 In the last week in February my brother visited Seattle and showed me a new addition to the 
 [Coliseum V Facility](https://coliseumv.com/).  On the playfield are two separate mounted 
 slingshots from which players attempt to launch a ball into their opponent's goal.  The goals 
